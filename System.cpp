@@ -20,6 +20,7 @@ System::System()
 
 void System::SelectMode()
 {
+	system("clear");
 	int mode = GetMode(menuText_, static_cast<int>(SystemMode::MIN), static_cast<int>(SystemMode::MAX));
 	if (static_cast<int>(SystemMode::EXIT) == mode) {
 		onExit_ = true;

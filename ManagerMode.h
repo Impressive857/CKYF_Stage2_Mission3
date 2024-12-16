@@ -18,8 +18,8 @@ public:
 		MAX = RETURN_TO_MAIN_MENU
 	};
 	enum class EditMode {
-		EDIT_TITLE = 1,
-		EDIT_ISBN = 2,
+		EDIT_ISBN = 1,
+		EDIT_TITLE = 2,
 		EDIT_AUTHOR = 3,
 		EDIT_PUBLISHER = 4,
 		EDIT_DATE_ADDED = 5,
@@ -27,7 +27,7 @@ public:
 		EDIT_RETAIL = 7,
 		EDIT_WHOLESALE = 8,
 		EXIT = 9,
-		MIN = EDIT_TITLE,
+		MIN = EDIT_ISBN,
 		MAX = EXIT
 	};
 	ManagerMode();
@@ -46,8 +46,6 @@ private:
 	char authorBuffer_[constant::authorLength];
 	char publisherBuffer_[constant::publisherLength];
 	const char* menuText_ =
-		"		CKYF图书管理系统\n"
-		"		  书库管理模块\n"
 		"1.查找某本书的信息\n"
 		"2.增加书\n"
 		"3.修改书的信息\n"
@@ -56,8 +54,6 @@ private:
 		"\n"
 		"输入选择：";
 	const char* editBookText_ =
-		"		CKYF图书管理系统\n"
-		"			修改书\n"
 		"1.修改ISBN号\n"
 		"2.修改书名\n"
 		"3.修改作者\n"

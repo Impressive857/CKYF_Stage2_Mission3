@@ -5,7 +5,6 @@
 
 #include <string>
 #include <iostream>
-#include <format>
 
 namespace constant {
 	constexpr size_t isbnLength = 14;
@@ -13,9 +12,9 @@ namespace constant {
 	constexpr size_t authorLength = 51;
 	constexpr size_t publisherLength = 51;
 	constexpr double saleTax = 0.06;
-	constexpr int doubleMaxLength = 16;
-	constexpr int intMaxLength = 10;
-	constexpr int dateMaxLength = 10;
+	constexpr size_t doubleMaxLength = 16;
+	constexpr size_t intMaxLength = 10;
+	constexpr size_t dateMaxLength = 10;
 }
 
 class BookData {

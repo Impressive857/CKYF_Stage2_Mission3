@@ -11,6 +11,7 @@ void SaleMode::OnEnter()
 void SaleMode::OnShow()
 {
 	while (true) {
+		system("clear");
 		mode_ = GetMode(menuText_, static_cast<int>(MenuMode::MIN), static_cast<int>(MenuMode::MAX));
 		switch (static_cast<MenuMode>(mode_)) {
 		case MenuMode::VIEW_SHOPPING_LIST: {
@@ -44,22 +45,27 @@ void SaleMode::PrintList() const
 {
 	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	std::tm* tm = std::localtime(&now);
+	std::ostringstream oss;
+	oss << std::left
+		<< std::setw(constant::intMaxLength) << "数量"
+		<< std::setw(constant::isbnLength) << "ISBN号"
+		<< std::setw(constant::bookTitleLength) << "书名"
+		<< std::setw(constant::doubleMaxLength + 4) << "单价"
+		<< std::setw(constant::doubleMaxLength + 4) << "金额"
+		<< "\n";
 	std::cout <<
 		"日期：" << (tm->tm_year + 1900) << "年" << (tm->tm_mon + 1) << "月" << (tm->tm_mday) << "日\n"
-		<< std::format("{:<{}}{:<{}}{:<{}}{:<{}}{:<{}}\n",
-			"数量", constant::intMaxLength,
-			"ISBN号", constant::isbnLength,
-			"书名", constant::bookTitleLength,
-			"单价", constant::doubleMaxLength + 4,
-			"金额", constant::doubleMaxLength + 4);
-	DataManager::GetIntance()->GetShoppingTrolleyList().ForEach([](std::list<BookData>::iterator book) {
-		std::cout
-			<< std::format("{:<{}}{:<{}}{:<{}}RMB {:<{}}RMB {:<{}}\n",
-				book->QtyOnHand(), constant::intMaxLength,
-				book->Isbn(), constant::isbnLength,
-				book->BookTitle(), constant::bookTitleLength,
-				book->Retail(), constant::doubleMaxLength,
-				static_cast<double>(book->QtyOnHand()) * book->Retail(), constant::doubleMaxLength);
+		<< oss.str();
+	DataManager::GetIntance()->GetShoppingTrolleyList().ForEach([&](std::list<BookData>::iterator book) {
+		oss.str("");
+		oss << std::left
+			<< std::setw(constant::intMaxLength) << book->QtyOnHand()
+			<< std::setw(constant::isbnLength) << book->Isbn()
+			<< std::setw(constant::bookTitleLength) << book->BookTitle()
+			<< "RMB " << std::setw(constant::doubleMaxLength) << book->Retail()
+			<< "RMB " << std::setw(constant::doubleMaxLength) << static_cast<double>(book->QtyOnHand()) * book->Retail()
+			<< "\n";
+		std::cout << oss.str();
 		}
 	);
 	std::cout << "-------------------------------------\n";
@@ -131,7 +137,10 @@ void SaleMode::AddBookToShoppingList()
 		}
 		std::optional<std::list<BookData>::iterator> bookInInventoryList = std::nullopt;
 		while (true) {
-			GetData("请输入书名：", bookTitle);
+			GetData("请输入书名：（输入~退出）", bookTitle);
+			if (!strncmp("~", bookTitle, sizeof(bookTitle - 1))) {
+				return;
+			}
 			bookInInventoryList = DataManager::GetIntance()->GetInventoryList().GetBookByBookTitle(bookTitle);
 			if (!bookInInventoryList) {
 				std::cout << "未从书库中找到此书，请重新输入！\n";
@@ -198,7 +207,10 @@ void SaleMode::EditBookInShoppingList()
 		}
 		std::optional<std::list<BookData>::iterator> bookInShoppingTrolleyList = std::nullopt;
 		while (true) {
-			GetData("请输入书名：", bookTitle);
+			GetData("请输入书名：（输入~退出）", bookTitle);
+			if (!strncmp("~", bookTitle, sizeof(bookTitle - 1))) {
+				return;
+			}
 			bookInShoppingTrolleyList = DataManager::GetIntance()->GetShoppingTrolleyList().GetBookByBookTitle(bookTitle);
 			if (!bookInShoppingTrolleyList) {
 				std::cout << "未从购物车中找到此书，请重新输入！\n";
@@ -257,7 +269,10 @@ void SaleMode::RemoveBookFromList()
 		}
 		std::optional<std::list<BookData>::iterator> bookInShoppingTrolleyList = std::nullopt;
 		while (true) {
-			GetData("请输入书名：", bookTitle);
+			GetData("请输入书名：（输入~退出）", bookTitle);
+			if (!strncmp("~", bookTitle, sizeof(bookTitle - 1))) {
+				return;
+			}
 			bookInShoppingTrolleyList = DataManager::GetIntance()->GetShoppingTrolleyList().GetBookByBookTitle(bookTitle);
 			if (!bookInShoppingTrolleyList) {
 				std::cout << "未从购物车中找到此书，请重新输入！\n";

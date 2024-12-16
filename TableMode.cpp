@@ -11,6 +11,7 @@ void TableMode::OnEnter()
 void TableMode::OnShow()
 {
 	while (true) {
+		system("clear");
 		mode_ = GetMode(menuText_, static_cast<int>(MenuMode::MIN), static_cast<int>(MenuMode::MAX));
 		switch (static_cast<MenuMode>(mode_)) {
 		case MenuMode::SHOW_BOOK_LIST: {
@@ -47,26 +48,32 @@ void TableMode::ShowBookList()
 		system("pause");
 		return;
 	}
+	std::ostringstream oss;
 	while (true) {
 		system("clear");
+		oss.str("");
+		oss << std::left
+			<< std::setw(constant::isbnLength) << "ISBN号"
+			<< std::setw(constant::bookTitleLength) << "书名"
+			<< std::setw(constant::intMaxLength) << "库存量"
+			<< std::setw(constant::doubleMaxLength + 4) << "零售价"
+			<< std::setw(constant::doubleMaxLength + 4) << "批发价"
+			<< "\n";
 		std::cout <<
 			"		CKYF图书管理系统\n"
 			"		   书库列表\n"
-			<< std::format("{:<{}}{:<{}}{:<{}}{:<{}}{:<{}}\n",
-				"ISBN号", constant::isbnLength,
-				"书名", constant::bookTitleLength,
-				"库存量", constant::intMaxLength,
-				"零售价", constant::doubleMaxLength + 4,
-				"批发价", constant::doubleMaxLength + 4);
-		DataManager::GetIntance()->GetInventoryList().ForEach([](std::list<BookData>::iterator book)
+			<< oss.str();
+		DataManager::GetIntance()->GetInventoryList().ForEach([&](std::list<BookData>::iterator book)
 			{
-				std::cout 
-					<< std::format("{:<{}}{:<{}}{:<{}}RMB {:<{}}RMB {:<{}}\n",
-						book->Isbn(), constant::isbnLength,
-						book->BookTitle(), constant::bookTitleLength,
-						book->QtyOnHand(), constant::intMaxLength,
-						book->Retail(), constant::doubleMaxLength,
-						book->Wholesale(), constant::doubleMaxLength);
+				oss.str("");
+				oss << std::left
+					<< std::setw(constant::isbnLength) << book->Isbn()
+					<< std::setw(constant::bookTitleLength) << book->BookTitle()
+					<< std::setw(constant::intMaxLength) << book->QtyOnHand()
+					<< "RMB " << std::setw(constant::doubleMaxLength) << book->Retail()
+					<< "RMB " << std::setw(constant::doubleMaxLength) << book->Wholesale()
+					<< "\n";
+				std::cout << oss.str();
 			}
 		);
 		char option;
@@ -102,31 +109,38 @@ void TableMode::ShowRetailList()
 		system("pause");
 		return;
 	}
+	std::ostringstream oss;
 	while (true) {
 		system("clear");
+		oss.str("");
+		oss << std::left
+			<< std::setw(constant::isbnLength) << "ISBN号"
+			<< std::setw(constant::bookTitleLength) << "书名"
+			<< std::setw(constant::intMaxLength) << "库存量"
+			<< std::setw(constant::doubleMaxLength + 4) << "零售价"
+			<< std::setw(constant::doubleMaxLength + 4) << "零售价总额"
+			<< "\n";
 		std::cout <<
 			"		CKYF图书管理系统\n"
 			"		   书库列表\n"
-			<< std::format("{:<{}}{:<{}}{:<{}}{:<{}}{:<{}}\n",
-				"ISBN号", constant::isbnLength,
-				"书名", constant::bookTitleLength,
-				"库存量", constant::intMaxLength,
-				"零售价", constant::doubleMaxLength + 4,
-				"零售价总额", constant::doubleMaxLength + 4);
+			<< oss.str();
 		double totalCost = 0.0;
 		DataManager::GetIntance()->GetInventoryList().ForEach([&](std::list<BookData>::iterator book)
 			{
-				std::cout
-					<< std::format("{:<{}}{:<{}}{:<{}}RMB {:<{}}RMB {:<{}}\n",
-						book->Isbn(), constant::isbnLength,
-						book->BookTitle(), constant::bookTitleLength,
-						book->QtyOnHand(), constant::intMaxLength,
-						book->Retail(), constant::doubleMaxLength,
-						book->Retail() * static_cast<double>(book->QtyOnHand()), constant::doubleMaxLength);
-				totalCost += book->Retail() * static_cast<double>(book->QtyOnHand());
+				oss.str("");
+				double thisBookCost = book->Retail() * static_cast<double>(book->QtyOnHand());
+				oss << std::left
+					<< std::setw(constant::isbnLength) << book->Isbn()
+					<< std::setw(constant::bookTitleLength) << book->BookTitle()
+					<< std::setw(constant::intMaxLength) << book->QtyOnHand()
+					<< "RMB " << std::setw(constant::doubleMaxLength) << book->Retail()
+					<< "RMB " << std::setw(constant::doubleMaxLength) << thisBookCost
+					<< "\n";
+				std::cout << oss.str();
+				totalCost += thisBookCost;
 			}
 		);
-		std::cout << "零售价总额：RMB" << totalCost << "\n";
+		std::cout << "零售价总额：RMB " << totalCost << "\n";
 		char option;
 		while (true) {
 			GetData("按A/a升序排列，按D/d降序排列，按Q/q退出", option);
@@ -160,31 +174,38 @@ void TableMode::ShowWholesaleList()
 		system("pause");
 		return;
 	}
+	std::ostringstream oss;
 	while (true) {
 		system("clear");
+		oss.str("");
+		oss << std::left
+			<< std::setw(constant::isbnLength) << "ISBN号"
+			<< std::setw(constant::bookTitleLength) << "书名"
+			<< std::setw(constant::intMaxLength) << "库存量"
+			<< std::setw(constant::doubleMaxLength + 4) << "批发价"
+			<< std::setw(constant::doubleMaxLength + 4) << "批发价总额"
+			<< "\n";
 		std::cout <<
 			"		CKYF图书管理系统\n"
 			"		   书库列表\n"
-			<< std::format("{:<{}}{:<{}}{:<{}}{:<{}}{:<{}}\n",
-				"ISBN号", constant::isbnLength,
-				"书名", constant::bookTitleLength,
-				"库存量", constant::intMaxLength,
-				"批发价", constant::doubleMaxLength + 4,
-				"批发价总额", constant::doubleMaxLength + 4);
+			<< oss.str();
 		double totalCost = 0.0;
 		DataManager::GetIntance()->GetInventoryList().ForEach([&](std::list<BookData>::iterator book)
 			{
-				std::cout
-					<< std::format("{:<{}}{:<{}}{:<{}}RMB {:<{}}RMB {:<{}}\n",
-						book->Isbn(), constant::isbnLength,
-						book->BookTitle(), constant::bookTitleLength,
-						book->QtyOnHand(), constant::intMaxLength,
-						book->Wholesale(), constant::doubleMaxLength,
-						book->Wholesale() * static_cast<double>(book->QtyOnHand()), constant::doubleMaxLength);
-				totalCost += book->Wholesale() * static_cast<double>(book->QtyOnHand());
+				oss.str("");
+				double thisBookCost = book->Wholesale() * static_cast<double>(book->QtyOnHand());
+				oss << std::left
+					<< std::setw(constant::isbnLength) << book->Isbn()
+					<< std::setw(constant::bookTitleLength) << book->BookTitle()
+					<< std::setw(constant::intMaxLength) << book->QtyOnHand()
+					<< "RMB " << std::setw(constant::doubleMaxLength) << book->Wholesale()
+					<< "RMB " << std::setw(constant::doubleMaxLength) << thisBookCost
+					<< "\n";
+				std::cout << oss.str();
+				totalCost += thisBookCost;
 			}
 		);
-		std::cout << "批发价总额：RMB" << totalCost << "\n";
+		std::cout << "批发价总额：RMB " << totalCost << "\n";
 		char option;
 		while (true) {
 			GetData("按A/a升序排列，按D/d降序排列，按Q/q退出", option);
@@ -218,24 +239,30 @@ void TableMode::ShowDateAddedList()
 		system("pause");
 		return;
 	}
+	std::ostringstream oss;
 	while (true) {
 		system("clear");
+		oss.str("");
+		oss << std::left
+			<< std::setw(constant::isbnLength) << "ISBN号"
+			<< std::setw(constant::bookTitleLength) << "书名"
+			<< std::setw(constant::intMaxLength) << "库存量"
+			<< std::setw(constant::dateMaxLength) << "进书日期"
+			<< "\n";
 		std::cout <<
 			"		CKYF图书管理系统\n"
 			"		   书库列表\n"
-			<< std::format("{:<{}}{:<{}}{:<{}}{:<{}}\n",
-				"ISBN号", constant::isbnLength,
-				"书名", constant::bookTitleLength,
-				"库存量", constant::intMaxLength,
-				"进书日期", constant::dateMaxLength);
+			<< oss.str();
 		DataManager::GetIntance()->GetInventoryList().ForEach([&](std::list<BookData>::iterator book)
 			{
-				std::cout
-					<< std::format("{:<{}}{:<{}}{:<{}}{:<{}}\n",
-						book->Isbn(), constant::isbnLength,
-						book->BookTitle(), constant::bookTitleLength,
-						book->QtyOnHand(), constant::intMaxLength,
-						book->GetDateString(), constant::dateMaxLength);
+				oss.str("");
+				oss << std::left
+					<< std::setw(constant::isbnLength) << book->Isbn()
+					<< std::setw(constant::bookTitleLength) << book->BookTitle()
+					<< std::setw(constant::intMaxLength) << book->QtyOnHand()
+					<< std::setw(constant::dateMaxLength) << book->GetDateString()
+					<< "\n";
+				std::cout << oss.str();
 			}
 		);
 		char option;

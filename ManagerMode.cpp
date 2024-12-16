@@ -19,6 +19,10 @@ void ManagerMode::OnEnter()
 void ManagerMode::OnShow()
 {
 	while (true) {
+		system("clear");
+		std::cout << 
+			"		CKYF图书管理系统\n"
+			"		  书库管理模块\n";
 		mode_ = GetMode(menuText_, static_cast<int>(MenuMode::MIN), static_cast<int>(MenuMode::MAX));
 		switch (static_cast<MenuMode>(mode_)) {
 		case MenuMode::LOOK_UP_BOOK: {
@@ -56,9 +60,12 @@ void ManagerMode::LookUpBook()
 		system("pause");
 		return;
 	}
-	GetData("请输入要查找的书名：", this->bookTitleBuffer_);
+	GetData("请输入要查找的书名：（输入~退出）", this->bookTitleBuffer_);
+	if (!strncmp("~", this->bookTitleBuffer_, sizeof(this->bookTitleBuffer_ - 1))) {
+		return;
+	}
 	auto book = DataManager::GetIntance()->GetInventoryList().GetBookByBookTitle(this->bookTitleBuffer_);
-	if (DataManager::GetIntance()->GetInventoryList().BookTitleIsExist(this->bookTitleBuffer_)) {
+	if (!book) {
 		std::cout << "书库中未查询到此书\n";
 	}
 	else {
@@ -79,6 +86,10 @@ void ManagerMode::AddBook()
 	}
 	while (true) {
 		GetData("请输入新书的名称：", this->bookTitleBuffer_);
+		if (!strncmp("~", this->bookTitleBuffer_, sizeof(this->bookTitleBuffer_ - 1))) {
+			std::cout << "此书名不合法！请重新输入！\n";
+			continue;
+		}
 		if (DataManager::GetIntance()->GetInventoryList().BookTitleIsExist(this->bookTitleBuffer_)) {
 			std::cout << "此书名已存在，请重新输入！\n";
 			continue;
@@ -107,7 +118,10 @@ void ManagerMode::EditBook()
 		system("pause");
 		return;
 	}
-	GetData("请输入要修改的书名：", this->bookTitleBuffer_);
+	GetData("请输入要修改的书名：（输入~退出）", this->bookTitleBuffer_);
+	if (!strncmp("~", this->bookTitleBuffer_, sizeof(this->bookTitleBuffer_ - 1))) {
+		return;
+	}
 	auto book = DataManager::GetIntance()->GetInventoryList().GetBookByBookTitle(this->bookTitleBuffer_);
 	if (!book) {
 		std::cout << "书库中未查询到此书\n";
@@ -120,25 +134,14 @@ void ManagerMode::EditBook()
 	double newRetail = 0.0;
 	double newWholesale = 0.0;
 	while (true) {
-		mode_ = GetMode(editBookText_, static_cast<int>(EditMode::MIN), static_cast<int>(EditMode::MAX));
 		system("clear");
+		std::cout <<
+			"		CKYF图书管理系统\n"
+			"			修改书\n";
 		(*book)->PrintInfo();
+		std::cout << "\n";
+		mode_ = GetMode(editBookText_, static_cast<int>(EditMode::MIN), static_cast<int>(EditMode::MAX));
 		switch (static_cast<EditMode>(mode_)) {
-		case EditMode::EDIT_TITLE: {
-			while (true) {
-				GetData("请输入新的书名：", this->bookTitleBuffer_);
-				if (DataManager::GetIntance()->GetInventoryList().BookTitleIsExist(this->bookTitleBuffer_)) {
-					std::cout << "此书名已经存在！\n";
-					continue;
-				}
-				break;
-			}
-			(*book)->SetBookTitle(this->bookTitleBuffer_);
-			if (bookInShoppingList) {
-				(*bookInShoppingList)->SetBookTitle(this->bookTitleBuffer_);
-			}
-			break;
-		}
 		case EditMode::EDIT_ISBN: {
 			while (true) {
 				GetData("请输入新的ISBN号：", this->isbnBuffer_);
@@ -151,6 +154,25 @@ void ManagerMode::EditBook()
 			(*book)->SetIsbn(this->isbnBuffer_);
 			if (bookInShoppingList) {
 				(*bookInShoppingList)->SetIsbn(this->isbnBuffer_);
+			}
+			break;
+		}
+		case EditMode::EDIT_TITLE: {
+			while (true) {
+				GetData("请输入新的书名：", this->bookTitleBuffer_);
+				if (!strncmp("~", this->bookTitleBuffer_, sizeof(this->bookTitleBuffer_ - 1))) {
+					std::cout << "此书名不合法！请重新输入！\n";
+					continue;
+				}
+				if (DataManager::GetIntance()->GetInventoryList().BookTitleIsExist(this->bookTitleBuffer_)) {
+					std::cout << "此书名已经存在！\n";
+					continue;
+				}
+				break;
+			}
+			(*book)->SetBookTitle(this->bookTitleBuffer_);
+			if (bookInShoppingList) {
+				(*bookInShoppingList)->SetBookTitle(this->bookTitleBuffer_);
 			}
 			break;
 		}
@@ -205,7 +227,10 @@ void ManagerMode::RemoveBook()
 		system("pause");
 		return;
 	}
-	GetData("请输入要删除的书名：", this->bookTitleBuffer_);
+	GetData("请输入要删除的书名：（输入~退出）", this->bookTitleBuffer_);
+	if (!strncmp("~", this->bookTitleBuffer_, sizeof(this->bookTitleBuffer_ - 1))) {
+		return;
+	}
 	auto book = DataManager::GetIntance()->GetInventoryList().GetBookByBookTitle(this->bookTitleBuffer_);
 	if (!book) {
 		std::cout << "书库中未查询到此书\n";

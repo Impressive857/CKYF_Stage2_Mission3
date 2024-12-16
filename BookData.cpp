@@ -309,7 +309,9 @@ void BookData::SetWholesale(double wholesale)
 
 std::string BookData::GetDateString() const
 {
-    return std::format("{}-{}-{}", this->dateAdded->tm_year + 1900, this->dateAdded->tm_mon + 1, this->dateAdded->tm_mday);
+    char buffer[constant::dateMaxLength + 1];
+    snprintf(buffer, sizeof(buffer), "%d-%d-%d", this->dateAdded->tm_year + 1900, this->dateAdded->tm_mon + 1, this->dateAdded->tm_mday);
+    return std::string(buffer);
 }
 
 void BookData::PrintDate() const

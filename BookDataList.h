@@ -6,6 +6,7 @@
 #include <list>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
 #include <utility>
 #include <functional>
 #include <algorithm>

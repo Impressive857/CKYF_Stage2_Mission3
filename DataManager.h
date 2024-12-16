@@ -17,7 +17,7 @@ inline void GetData(const char* text, _Ty& data) {
 		if (std::cin.fail()) {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			std::cout << "输入不合法，请重新输入！:";
+			std::cout << "输入不合法，请重新输入！\n";
 			continue;
 		}
 		break;
